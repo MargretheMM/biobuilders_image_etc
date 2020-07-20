@@ -55,7 +55,10 @@ def AreaOfConvexHull(G):
 def NumberOfCycles(G):
     return len(nx.cycle_basis(G))
 
+# function to calculate angles for nodes with a specific number of neighbours
 def Anglecalc(G,num):
+    # creates a dictionary - each set of three nodes used at a key will give the angle between them
+    # note that nodes are addressed by their identifier numbers, not their positions
     results={}
     nodes = dict(G.nodes(data=True))
     for node in G.nodes(data=True):
@@ -65,22 +68,25 @@ def Anglecalc(G,num):
         for start, i in enumerate(neighbors):
             i_node = nodes[i]
             for j in neighbors[start+1:]:
-                results[(node[0], i, j)] = angle(node[1], i_node, nodes[j])
-                
+                results[(node[0], i, j)] = angle(node[1], i_node, nodes[j])           
     return results
 
+
 def angle(vertex,side1, side2):
+    # use relative positions - corresponds to l an r having the coordinates of the v to l and v to r vectors    
     def coords(node, rel_pos=(0,0)):
         return (node["x"] - rel_pos[0], node["y"] - rel_pos[1])
     v = coords(vertex)
     l = coords(side1, v)
     r = coords(side2, v)
+    # calculating the cos of the angle between the l and r vectors
     res = (l[0]*r[0]+l[1]*r[1]) / ((l[0]**2+l[1]**2)**.5 * (r[0]**2+r[1]**2)**.5)
     # catch floating point inaccuracy
     if res < -1:
         res = -1
     elif res > 1:
         res = 1
+    # angle calculated in radians
     rad = math.acos(res)
     return rad
 
